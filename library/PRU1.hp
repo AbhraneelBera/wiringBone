@@ -1,0 +1,243 @@
+/*
+    This file is a part of the wiringBone library
+    Copyright (C) 2015 Abhraneel Bera
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 3 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+    USA
+*/
+
+// Constant Table
+#define RAM C25
+#define IEP C26
+
+// IEP Register Offset
+#define COUNT      0xc
+
+// Watchdog timeout
+#define WATCHDOG_TIMEOUT 100000000 // 500 milli second
+
+// Data RAM Offset
+#define PIN_ENABLE 0
+#define PIN_MODE   4
+
+#define P8_45_TON  (112+( 0*4)) //PRU1_0
+#define P8_45_TOFF (112+( 1*4)) //PRU1_0
+#define P8_46_TON  (112+( 2*4)) //PRU1_1
+#define P8_46_TOFF (112+( 3*4)) //PRU1_1
+#define P8_43_TON  (112+( 4*4)) //PRU1_2
+#define P8_43_TOFF (112+( 5*4)) //PRU1_2
+#define P8_44_TON  (112+( 6*4)) //PRU1_3
+#define P8_44_TOFF (112+( 7*4)) //PRU1_3
+#define P8_41_TON  (112+( 8*4)) //PRU1_4
+#define P8_41_TOFF (112+( 9*4)) //PRU1_4
+#define P8_42_TON  (112+(10*4)) //PRU1_5
+#define P8_42_TOFF (112+(11*4)) //PRU1_5
+#define P8_39_TON  (112+(12*4)) //PRU1_6
+#define P8_39_TOFF (112+(13*4)) //PRU1_6
+#define P8_40_TON  (112+(14*4)) //PRU1_7
+#define P8_40_TOFF (112+(15*4)) //PRU1_7
+#define P8_27_TON  (112+(16*4)) //PRU1_8
+#define P8_27_TOFF (112+(17*4)) //PRU1_8
+#define P8_29_TON  (112+(18*4)) //PRU1_9
+#define P8_29_TOFF (112+(19*4)) //PRU1_9
+#define P8_28_TON  (112+(20*4)) //PRU1_10
+#define P8_28_TOFF (112+(21*4)) //PRU1_10
+#define P8_30_TON  (112+(22*4)) //PRU1_11
+#define P8_30_TOFF (112+(23*4)) //PRU1_11
+#define P8_21_TON  (112+(24*4)) //PRU1_12
+#define P8_21_TOFF (112+(25*4)) //PRU1_12
+#define P8_20_TON  (112+(26*4)) //PRU1_13
+#define P8_20_TOFF (112+(27*4)) //PRU1_13
+#define P9_26_TON  (112+(28*4)) //PRU1_16_IN
+#define P9_26_TOFF (112+(29*4)) //PRU1_16_IN
+
+#define TIMEOUT        (112+(30*4))
+#define FAILSAFE_T_ON  (112+(31*4))
+#define FAILSAFE_T_OFF (112+(32*4))
+#define WATCHDOG       (112+(33*4))
+
+
+// Pin Enable bits
+#define ENABLE       register.enable
+#define P8_45_ENABLE register.enable.t13
+#define P8_46_ENABLE register.enable.t14
+#define P8_43_ENABLE register.enable.t15
+#define P8_44_ENABLE register.enable.t16
+#define P8_41_ENABLE register.enable.t17
+#define P8_42_ENABLE register.enable.t18
+#define P8_39_ENABLE register.enable.t19
+#define P8_40_ENABLE register.enable.t20
+#define P8_27_ENABLE register.enable.t21
+#define P8_29_ENABLE register.enable.t22
+#define P8_28_ENABLE register.enable.t23
+#define P8_30_ENABLE register.enable.t24
+#define P8_21_ENABLE register.enable.t25
+#define P8_20_ENABLE register.enable.t26
+#define P9_26_ENABLE register.enable.t27
+
+// Pin Mode bits
+#define MODE       register.mode
+#define P8_45_MODE register.mode.t13
+#define P8_46_MODE register.mode.t14
+#define P8_43_MODE register.mode.t15
+#define P8_44_MODE register.mode.t16
+#define P8_41_MODE register.mode.t17
+#define P8_42_MODE register.mode.t18
+#define P8_39_MODE register.mode.t19
+#define P8_40_MODE register.mode.t20
+#define P8_27_MODE register.mode.t21
+#define P8_29_MODE register.mode.t22
+#define P8_28_MODE register.mode.t23
+#define P8_30_MODE register.mode.t24
+#define P8_21_MODE register.mode.t25
+#define P8_20_MODE register.mode.t26
+#define P9_26_MODE register.mode.t27
+
+// Pin Output bits
+#define OUTPUT    r30
+#define P8_45_OUT r30.t0
+#define P8_46_OUT r30.t1
+#define P8_43_OUT r30.t2
+#define P8_44_OUT r30.t3
+#define P8_41_OUT r30.t4
+#define P8_42_OUT r30.t5
+#define P8_39_OUT r30.t6
+#define P8_40_OUT r30.t7
+#define P8_27_OUT r30.t8
+#define P8_29_OUT r30.t9
+#define P8_28_OUT r30.t10
+#define P8_30_OUT r30.t11
+#define P8_21_OUT r30.t12
+#define P8_20_OUT r30.t13
+
+// Pin Input bits
+#define INPUT    r31
+#define P8_45_IN r31.t0
+#define P8_46_IN r31.t1
+#define P8_43_IN r31.t2
+#define P8_44_IN r31.t3
+#define P8_41_IN r31.t4
+#define P8_42_IN r31.t5
+#define P8_39_IN r31.t6
+#define P8_40_IN r31.t7
+#define P8_27_IN r31.t8
+#define P8_29_IN r31.t9
+#define P8_28_IN r31.t10
+#define P8_30_IN r31.t11
+#define P8_21_IN r31.t12
+#define P8_20_IN r31.t13
+#define P9_26_IN r31.t16
+
+// Toggles
+#define P8_45_NEXT_TOGGLE register.P8_45_toggle
+#define P8_45_PREV_TOGGLE register.P8_45_toggle
+#define P8_46_NEXT_TOGGLE register.P8_46_toggle
+#define P8_46_PREV_TOGGLE register.P8_46_toggle
+#define P8_43_NEXT_TOGGLE register.P8_43_toggle
+#define P8_43_PREV_TOGGLE register.P8_43_toggle
+#define P8_44_NEXT_TOGGLE register.P8_44_toggle
+#define P8_44_PREV_TOGGLE register.P8_44_toggle
+#define P8_41_NEXT_TOGGLE register.P8_41_toggle
+#define P8_41_PREV_TOGGLE register.P8_41_toggle
+#define P8_42_NEXT_TOGGLE register.P8_42_toggle
+#define P8_42_PREV_TOGGLE register.P8_42_toggle
+#define P8_39_NEXT_TOGGLE register.P8_39_toggle
+#define P8_39_PREV_TOGGLE register.P8_39_toggle
+#define P8_40_NEXT_TOGGLE register.P8_40_toggle
+#define P8_40_PREV_TOGGLE register.P8_40_toggle
+#define P8_27_NEXT_TOGGLE register.P8_27_toggle
+#define P8_27_PREV_TOGGLE register.P8_27_toggle
+#define P8_29_NEXT_TOGGLE register.P8_29_toggle
+#define P8_29_PREV_TOGGLE register.P8_29_toggle
+#define P8_28_NEXT_TOGGLE register.P8_28_toggle
+#define P8_28_PREV_TOGGLE register.P8_28_toggle
+#define P8_30_NEXT_TOGGLE register.P8_30_toggle
+#define P8_30_PREV_TOGGLE register.P8_30_toggle
+#define P8_21_NEXT_TOGGLE register.P8_21_toggle
+#define P8_21_PREV_TOGGLE register.P8_21_toggle
+#define P8_20_NEXT_TOGGLE register.P8_20_toggle
+#define P8_20_PREV_TOGGLE register.P8_20_toggle
+#define P9_26_NEXT_TOGGLE register.P9_26_toggle
+#define P9_26_PREV_TOGGLE register.P9_26_toggle
+
+// Temp Registers
+#define CURRENT_TIME        register.current_time
+#define T_ON                register.t_on
+#define T_OFF               register.t_off
+#define T_TIMEOUT           register.timeout
+#define LAST_INPUT_FRAME    register.last_input_frame
+#define CURRENT_INPUT_FRAME register.current_input_frame
+#define TEMP                register.temp
+
+// Input Pin States
+#define P8_45_LAST_STATE    LAST_INPUT_FRAME.t0
+#define P8_46_LAST_STATE    LAST_INPUT_FRAME.t1
+#define P8_43_LAST_STATE    LAST_INPUT_FRAME.t2
+#define P8_44_LAST_STATE    LAST_INPUT_FRAME.t3
+#define P8_41_LAST_STATE    LAST_INPUT_FRAME.t4
+#define P8_42_LAST_STATE    LAST_INPUT_FRAME.t5
+#define P8_39_LAST_STATE    LAST_INPUT_FRAME.t6
+#define P8_40_LAST_STATE    LAST_INPUT_FRAME.t7
+#define P8_27_LAST_STATE    LAST_INPUT_FRAME.t8
+#define P8_29_LAST_STATE    LAST_INPUT_FRAME.t9
+#define P8_28_LAST_STATE    LAST_INPUT_FRAME.t10
+#define P8_30_LAST_STATE    LAST_INPUT_FRAME.t11
+#define P8_21_LAST_STATE    LAST_INPUT_FRAME.t12
+#define P8_20_LAST_STATE    LAST_INPUT_FRAME.t13
+#define P9_26_LAST_STATE    LAST_INPUT_FRAME.t16
+#define P8_45_CURRENT_STATE CURRENT_INPUT_FRAME.t0
+#define P8_46_CURRENT_STATE CURRENT_INPUT_FRAME.t1
+#define P8_43_CURRENT_STATE CURRENT_INPUT_FRAME.t2
+#define P8_44_CURRENT_STATE CURRENT_INPUT_FRAME.t3
+#define P8_41_CURRENT_STATE CURRENT_INPUT_FRAME.t4
+#define P8_42_CURRENT_STATE CURRENT_INPUT_FRAME.t5
+#define P8_39_CURRENT_STATE CURRENT_INPUT_FRAME.t6
+#define P8_40_CURRENT_STATE CURRENT_INPUT_FRAME.t7
+#define P8_27_CURRENT_STATE CURRENT_INPUT_FRAME.t8
+#define P8_29_CURRENT_STATE CURRENT_INPUT_FRAME.t9
+#define P8_28_CURRENT_STATE CURRENT_INPUT_FRAME.t10
+#define P8_30_CURRENT_STATE CURRENT_INPUT_FRAME.t11
+#define P8_21_CURRENT_STATE CURRENT_INPUT_FRAME.t12
+#define P8_20_CURRENT_STATE CURRENT_INPUT_FRAME.t13
+#define P9_26_CURRENT_STATE CURRENT_INPUT_FRAME.t16
+
+// Register Structure
+.struct Structure
+  .u32 enable
+  .u32 mode
+  .u32 current_time
+  .u32 t_on
+  .u32 t_off
+  .u32 timeout
+  .u32 last_input_frame
+  .u32 current_input_frame
+  .u32 temp
+  .u32 P8_45_toggle
+  .u32 P8_46_toggle
+  .u32 P8_43_toggle
+  .u32 P8_44_toggle
+  .u32 P8_41_toggle
+  .u32 P8_42_toggle
+  .u32 P8_39_toggle
+  .u32 P8_40_toggle
+  .u32 P8_27_toggle
+  .u32 P8_29_toggle
+  .u32 P8_28_toggle
+  .u32 P8_30_toggle
+  .u32 P8_21_toggle
+  .u32 P8_20_toggle
+  .u32 P9_26_toggle
+.ends
+.assign Structure, R0, *, register
