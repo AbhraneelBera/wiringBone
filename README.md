@@ -3,14 +3,16 @@ Wiring/Arduino style library for BeagleBone Black Platform
 #Description:
 This library contains almost all the core wiring/arduino functions along with some advanced functions.
 This library is intended for quick and easy hardware control on the BeagleBone Black platform.
+All the functions have similar behaviour with the wiring/arduino environment.
+This library uses the power of 'beaglebone-universal-io' device tree overlays to configure the overlay at runtime. 
 #Features:
 1. Control 65 GPIO pins for digital input/output.
 2. Generate PWM from total 30 pins (6 pins from PWMSS and 24 pins from PRU_ICSS).
 3. Among 30 PWM pins, 24 pins have optional failsafe feature.
 4. Capture pulse width and time period of incoming pulse train from 26 pins.
-5. UART ports - 4.
-6. I2C ports - 1.
-7. SPI ports - 2 (experimental).
+5. Control 4 UART ports.
+6. Control 1 I2C port.
+7. Control 2 SPI ports (experimental).
 8. GPIO and PWM port clean-up at program exit (Work in Progress).
 
 Use of some pins may require disabling the hdmi and emmc capes.
@@ -303,7 +305,7 @@ First make the script executable by typing 'chmod 755 build-source' in the termi
 build-source will accept 3 cases: make, make-and-run and clean.
 For Example: type ./build-source make-and-run to compile your code and run.
 
-#Stopping code:
+#Stopping the program:
 Always stop the program with ctrl+c.
 When the program is stopped it will turn off all the gpio and pwm outputs and then unexport the exported gpio and pwm pins.
 
