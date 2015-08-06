@@ -66,7 +66,8 @@ Functions:
     void digitalWrite(Pin pin, bool state)
     uint8_t digitalRead(Pin pin)
 
-direction can be INPUT or OUTPUT. state can be HIGH or LOW
+direction can be INPUT or OUTPUT. state can be HIGH or LOW.
+
 pinMode() function is only required to set the direction of pin when the pin is in gpio mode.
 To use any pin in gpio mode the UserPinConfig.h file has to be modified by changing pin mode to gpio.
 
@@ -77,7 +78,8 @@ Functions:
     uint32_t pulseIn(Pin pin, bool polarity)
     uint32_t pulseIn(Pin pin, bool polarity, uint32_t timeout)
 
-polarity can be HIGH or LOW
+polarity can be HIGH or LOW.
+
 analogWrite() will generate PWM with time period 2040 micro seconds which is approx 490 Hz.
 There are 8 pins which are controlled by the PWMSS and 24 pins which are controlled by the PRU_ICSS.
 To use PWM outputs the pin modes for PWMSS pins should be changed to 'pwm' mode and PRU_ICSS pins should be changed to 'pruout' mode in the UserPinConfig.h file.
