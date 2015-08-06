@@ -76,19 +76,19 @@ $(LIB_OBJ): %.o : %.cpp
 
 $(C_OBJ): %.o : %.c
 	@echo Compiling $(notdir $<)
-	@g++ -c $< $(INCLUDE) $(CFLAGS) -o $(OBJ_DIR)$(notdir $@)
+	@g++ -include Arduino.h -c $< $(INCLUDE) $(CFLAGS) -o $(OBJ_DIR)$(notdir $@)
 
 $(CPP_OBJ): %.o : %.cpp
 	@echo Compiling $(notdir $<)
-	@g++ -c $< $(INCLUDE) $(CPPFLAGS) -o $(OBJ_DIR)$(notdir $@)
+	@g++ -include Arduino.h -c $< $(INCLUDE) $(CPPFLAGS) -o $(OBJ_DIR)$(notdir $@)
 
 $(INO_OBJ): %.o : %.ino
 	@echo Compiling $(notdir $<)
-	@g++ -x c++ -c $< $(INCLUDE) $(CPPFLAGS) -o $(OBJ_DIR)$(notdir $@)
+	@g++ -x c++ -include Arduino.h -c $< $(INCLUDE) $(CPPFLAGS) -o $(OBJ_DIR)$(notdir $@)
 
 $(PDE_OBJ): %.o : %.pde
 	@echo Compiling $(notdir $<)
-	@g++ -x c++ -c $< $(INCLUDE) $(CPPFLAGS) -o $(OBJ_DIR)$(notdir $@)
+	@g++ -x c++ -include Arduino.h -c $< $(INCLUDE) $(CPPFLAGS) -o $(OBJ_DIR)$(notdir $@)
 
 
 pru: PRU0.p PRU1.p

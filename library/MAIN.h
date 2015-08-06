@@ -40,7 +40,9 @@ void StopProgram(int dummy)
 
 void* execute_loop(void* dummy)
 {
-  while(1)
+  setup();
+
+  while(!stop)
   {
     loop();
   }
@@ -52,8 +54,6 @@ void initialize_loop()
   pthread_t thread;
 
   int dummy=0;
-
-  setup();
 
   pthread_create(&thread, NULL, execute_loop, (void*)dummy);
 

@@ -8,12 +8,13 @@ This library uses the power of 'beaglebone-universal-io' device tree overlays to
 #Features:
 1. Control 65 GPIO pins for digital input/output.
 2. Generate PWM from total 30 pins (6 pins from PWMSS and 24 pins from PRU_ICSS).
-3. Among 30 PWM pins, 24 pins have optional failsafe feature.
+3. Among 30 PWM pins, 24 pins have failsafe feature (Discussed in 'PWM' section below).
 4. Capture pulse width and time period of incoming pulse train from 26 pins.
-5. Control 4 UART ports.
+5. Control 4 UART ports and any other serial device available.
 6. Control 1 I2C port.
-7. Control 2 SPI ports (experimental).
-8. GPIO and PWM port clean-up at program exit (Work in Progress).
+7. Control 2 SPI ports (experimental, not tested).
+8. Configure the overlay at run-time and the overlay will revert back to the default pin modes at program exit.
+9. GPIO and PWM port auto clean-up at program exit (Discussed in 'Stopping the program' section below).
 
 Use of some pins may require disabling the hdmi and emmc capes.
 Refer to the pin diagrams in this link http://beagleboard.org/Support/bone101
@@ -32,18 +33,19 @@ First of all clone this repository in any directory on the local BeagleBone Blac
 
 To use any of the pins with wiringBone user has to modify the UserPinConfig.h file and change the pin mode of required pins. Each pin in Beaglebone Black has various modes of operation. That's why the user has to select wisely which pin to use in which mode by editing the UserPinConfig.h file. Valid modes for each pin is mentioned in the UserPinConfig.h file.
 
-If pins- P9.25, P9.28, P9.29, P9.31 are used hdmi-audio cape should be disabled first.
+*If pins- P9.25, P9.28, P9.29, P9.31 are used hdmi-audio cape should be disabled first.
 
-If pins- P8.27, P8.28, P8.29, P8.30, P8.31, P8.32, P8.33, P8.34, P8.35, P8.36, P8.37, P8.38, P8.39, P8.40, P8.41, P8.42, P8.43, P8.44, P8.45, P8.46 are used hdmi cape should be disabled first.
+*If pins- P8.27, P8.28, P8.29, P8.30, P8.31, P8.32, P8.33, P8.34, P8.35, P8.36, P8.37, P8.38, P8.39, P8.40, P8.41, P8.42, P8.43, P8.44, P8.45, P8.46 are used hdmi cape should be disabled first.
 
-If pins- P8.3, P8.4, P8.5, P8.6, P8.20, P8.21, P8.22, P8.23, P8.24, P8.25 are used emmc cape should be disabled first.
+*If pins- P8.3, P8.4, P8.5, P8.6, P8.20, P8.21, P8.22, P8.23, P8.24, P8.25 are used emmc cape should be disabled first.
 
 To disable any of the above capes open /boot/uEnv.txt file and remove comment from the appropriate line. Save the file and reboot. For details refer to Cape Manager section in this link http://elinux.org/Beagleboard:Weather_Cape_Work-Around
 
 The library will automatically compile source files present in the cloned directory (wiringBone directory).
 If the source files are present in some other directory then that directory path needs to be included in the Makefile.mk file. Instructions are present within the Makefile.mk file.
 
-The source files can have extensions .c, .cpp, .ino and .pde. Multiple .c and .cpp files can be compiled but compiling multiple .ino or .pde is not recommended.
+The source files can have extensions .c, .cpp, .ino and .pde.
+Multiple .c and .cpp files (including library style sources having one .c/.cpp file and one .h file) can be compiled but compiling multiple .ino or .pde is not recommended.
 
 #Usage:
 The code should follow the setup() and loop() pattern similar to the wiring/arduino sketches.
@@ -64,7 +66,7 @@ void digitalWrite(Pin pin, bool state)
 
 uint8_t digitalRead(Pin pin)
 
-pinMode function is only required to set the direction of pin when the pin is in gpio mode.
+pinMode() function is only required to set the direction of pin when the pin is in gpio mode.
 To use any pin in gpio mode the UserPinConfig.h file has to be modified by changing pin mode to gpio.
 
 #2) PWM
@@ -118,7 +120,7 @@ void setFailsafePRU (uint32_t pulseWidth_us)
 
 void setFailsafePRU (uint32_t pulseWidth_us, uint32_t timePeriod_us)
 
-* 'us' refers to micro seconds and 'ns' refers to nano seconds.
+'us' refers to micro seconds and 'ns' refers to nano seconds.
 
 The setPulseReadTimeout can be called once to set the maximum time to wait for a toggle in the input pulse.
 The timeout value should be always greater than the time period of the input signal.
@@ -193,7 +195,7 @@ To use any UART pin user should change the pin mode to uart in the UserPinConfig
 
 Advanced Usage:
 
-Other than this user can use any other serial device present on the device (For Example: bluetooth serial, gadget serial etc.) with this library.
+Other than this any other serial device present (For Example: bluetooth serial, gadget serial etc.) can be used with this library.
 To do this user will have to create an object of class HardwareSerial with device path as the parameter.
 For example: to use bluetooth serial, use: HardwareSerial mySerial("/dev/rfcomm0");
 Now the mySerial object can be used with the library like mySerial.begin(115200);
@@ -240,7 +242,7 @@ BeagleBone Black can not be used in I2C slave mode.
 Example usage: Wire.begin();
 
 #7) SPI
-(The SPI library is experimental)
+(The SPI library is experimental and not tested)
 
 Functions:
 
@@ -307,13 +309,15 @@ For Example: type ./build-source make-and-run to compile your code and run.
 
 #Stopping the program:
 Always stop the program with ctrl+c.
-When the program is stopped it will turn off all the gpio and pwm outputs and then unexport the exported gpio and pwm pins.
+The wiringBone library uses an auto clean-up feature.
+The basic idea is, if the program is using a pin then that pin should be restored back to its previous state after program termination.
+When the program is stopped using ctrl+c it will reset all the GPIOs being used, turn off PWM outputs, unexport the GPIO and PWM pins being used and configure the overlay back to default states.
 
 If program is terminated with ctrl+z it will not perform the clean-up at exit.
 
 #Known Issues:
-1. The auto clean-up at program exit may not work in certain situations if the program control is stuck in an infinite loop within the loop() function or a long delay is used in the code. (Work in progress)
-2. Error messages may not show accurate data. (Work in progress)
+1. After boot up if a program is run for the first time it may give a "Bus error". Nothing to worry about it. Run the program again. It will work. Sometimes the universal-io overlay takes some time to load, which is the cause of this error. Work is in progress to fix this issue.
+2. Error messages may not show accurate information. Work is in progress to fix this issue.
 
 #About
 This library is developed by Abhraneel Bera. Copyright (c) 2015 All rights reserved.
