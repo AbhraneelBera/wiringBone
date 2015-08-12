@@ -1,4 +1,4 @@
-
+#!/bin/bash
 case "$1" in
 	"make")
 	cd library
