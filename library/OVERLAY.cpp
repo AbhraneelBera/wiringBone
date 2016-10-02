@@ -28,6 +28,8 @@
 #include <wordexp.h>
 #include <iostream>
 #include <fstream>
+#include <dirent.h>
+#include <linux/version.h>
 
 #include "PINS.h"
 #include "CommonDefines.h"
@@ -35,6 +37,18 @@
 #include "GPIO.h"
 #include "PWM.h"
 #include "CLOCK.h"
+
+#if LINUX_VERSION_CODE > KERNEL_VERSION(3,8,13)
+#define	OCPDIR "/sys/devices/platform/ocp/ocp:%s_pinmux/state"
+#define	SLOTS "/sys/devices/platform/bone_capemgr/slots"
+#define P9_91_OCP "/sys/devices/platform/ocp/ocp:P9_91_pinmux/state"
+#define P9_92_OCP "/sys/devices/platform/ocp/ocp:P9_92_pinmux/state"
+#else
+#define OCPDIR "/sys/devices/ocp.*/%s_pinmux.*/state"
+#define SLOTS "/sys/devices/bone_capemgr.*/slots"
+#define P9_91_OCP "/sys/devices/ocp.*/P9_91_pinmux.*/state"
+#define P9_92_OCP "/sys/devices/ocp.*/P9_92_pinmux.*/state"
+#endif
 
 OVERLAY::OVERLAY()
 {
@@ -119,7 +133,7 @@ int OVERLAY::configOverlay(Pin pin)
 { 
   FILE *fd;
   wordexp_t path;
-  char filePath[50], mode[8];
+  char filePath[100], mode[8];
   bool validMode = false;
   if(pin.selectedMode == disabled)
   return 0;
@@ -144,11 +158,11 @@ int OVERLAY::configOverlay(Pin pin)
   if(pin.virtualCape == emmc)
   loadCape("cape-univ-emmc");
   if(pin.pinNum == 20 && (pin.selectedMode == pruin || pin.selectedMode == pruout))
-  sprintf(filePath, "/sys/devices/ocp.*/P9_91_pinmux.*/state");
+  sprintf(filePath, P9_91_OCP);
   else if(pin.pinNum == 7 && (pin.selectedMode == pruin || pin.selectedMode == pruout))
-  sprintf(filePath, "/sys/devices/ocp.*/P9_92_pinmux.*/state");
+  sprintf(filePath, P9_91_OCP);
   else
-  sprintf(filePath, "/sys/devices/ocp.*/%s_pinmux.*/state", pin.pinName);
+  sprintf(filePath, OCPDIR, pin.pinName);
   wordexp(filePath, &path, 0);
   if((fd = fopen(path.we_wordv[0], "w")) == NULL)
   {
@@ -189,10 +203,15 @@ int OVERLAY::restoreOverlay(Pin pin)
 {
   FILE *fd;
   wordexp_t path;
-  char filePath[50];
+  char filePath[100];
   if(pin.selectedMode == disabled)
   return 0;
-  sprintf(filePath, "/sys/devices/ocp.*/%s_pinmux.*/state", pin.pinName);
+  if(pin.pinNum == 20 && (pin.selectedMode == pruin || pin.selectedMode == pruout))
+  sprintf(filePath, P9_91_OCP);
+  else if(pin.pinNum == 7 && (pin.selectedMode == pruin || pin.selectedMode == pruout))
+  sprintf(filePath, P9_91_OCP);
+  else
+  sprintf(filePath, OCPDIR, pin.pinName);
   wordexp(filePath, &path, 0);
   if((fd = fopen(path.we_wordv[0], "w")) == NULL)
   {
@@ -302,7 +321,7 @@ int OVERLAY::loadCape(std::string capeName)
 {
   FILE *fd;
   wordexp_t path;
-  wordexp("/sys/devices/bone_capemgr*/slots", &path, 0);
+  wordexp(SLOTS, &path, 0);
   if(capeLoaded(path.we_wordv[0], capeName))
   return 0;
   if((fd = fopen(path.we_wordv[0], "w")) == NULL)
