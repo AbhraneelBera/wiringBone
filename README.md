@@ -166,7 +166,7 @@ Functions:
     size_t write(unsigned int n)
     size_t write(int n)
 
-Above funtions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
+Above functions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
 There are 4 uart ports available.
 UART1 is defined as Serial, UART2 is defined as Serial1, UART4 is defined as Serial2 and UART5 is defined as Serial3.
 Usage example: 
@@ -205,7 +205,7 @@ Functions:
     size_t write(unsigned int n)
     size_t write(int n)
 
-Above funtions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
+Above functions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
 Though the board has 2 I2C ports, only I2C-2 will be used.
 The sendStop option in I2C is not yet implemented.
 BeagleBone Black can not be used in I2C slave mode.
@@ -229,7 +229,7 @@ Functions:
     void setDataMode(uint8_t dataMode)
     void setClockDivider(uint8_t clockDiv)
 
-Above funtions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
+Above functions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
 There are 2 SPI ports available.
 SPI-0 is defined as SPI.
 Example usage: 
@@ -257,10 +257,10 @@ Functions:
     uint8_t read( int idx )
     void write( int idx, uint8_t val )
     void update( int idx, uint8_t val )
-    get() (Refer to Arduino website for the funtion parameters)
-    put() (Refer to Arduino website for the funtion parameters)
+    get() (Refer to Arduino website for the function parameters)
+    put() (Refer to Arduino website for the function parameters)
 
-Above funtions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
+Above functions have similar behaviour with the arduino environment (Refer to documentation on Arduino website).
 The library will not use any hardware eeprom.
 Instead it will create a virtual file in the file system and perform read write operations to it as if it is communicating with an eeprom.
 
