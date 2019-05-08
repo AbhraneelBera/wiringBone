@@ -40,17 +40,17 @@ FILE *fp;
 
 void eeprom_file_open()
 {
-  fp = fopen("../VIRTUAL_EEPROM.bin", "r+b");  //to stop from overwritting to the file and preserve previous data
+  fp = fopen("../VIRTUAL_EEPROM.bin", "r+b");  //to stop from overwriting to the file and preserve previous data
   if (!fp)
   {
     printf("Unable to open Virtual EEPROM file,New EEPROM file has been created!");
-    fp = fopen("../VIRTUAL_EEPROM.bin", "w+b");  //to creat empty file
+    fp = fopen("../VIRTUAL_EEPROM.bin", "w+b");  //to create empty file
     fclose(fp);
-    fp = fopen("../VIRTUAL_EEPROM.bin", "r+b");  //to stop from overwritting to the file and preserve previous data
+    fp = fopen("../VIRTUAL_EEPROM.bin", "r+b");  //to stop from overwriting to the file and preserve previous data
   }
 } 
 
-uint8_t eeprom_read_byte(uint8_t* address) /* read data from specific addess with 1 byte size*/
+uint8_t eeprom_read_byte(uint8_t* address) /* read data from specific address with 1 byte size*/
 { 
   uint8_t x;
   eeprom_file_open();
@@ -61,7 +61,7 @@ uint8_t eeprom_read_byte(uint8_t* address) /* read data from specific addess wit
   return x;
 }
 
-void eeprom_write_byte(uint8_t* address, uint8_t x) /* write data to specific addess with 1 byte size*/
+void eeprom_write_byte(uint8_t* address, uint8_t x) /* write data to specific address with 1 byte size*/
 {
   eeprom_file_open();
   rewind(fp); 

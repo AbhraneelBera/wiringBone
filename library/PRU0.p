@@ -135,7 +135,7 @@ process_timeout:
   SBCO TEMP, RAM, TOFF_OFFSET, 4
 
   // Set previous toggle == current time
-  // Though toggle not occured, still to avoid any garbage reading when pulse is restored
+  // Though toggle not occurred, still to avoid any garbage reading when pulse is restored
   MOV PREV_TOGGLE, CURRENT_TIME
 
 process_input_end:
@@ -153,7 +153,7 @@ process_input_end:
   LBCO T_TIMEOUT, RAM, WATCHDOG, 4
   ADD T_TIMEOUT, T_TIMEOUT, TEMP
 
-  // Check if failsafe occured
+  // Check if failsafe occurred
   MOV TEMP, WATCHDOG_TIMEOUT
   SUB TEMP, TEMP, T_TIMEOUT
   QBBC process_failsafe_end, TEMP.t31
